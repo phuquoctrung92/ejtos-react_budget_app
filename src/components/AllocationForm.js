@@ -2,20 +2,28 @@ import React, { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 
 const AllocationForm = (props) => {
-    const { dispatch,remaining  } = useContext(AppContext);
+    const { dispatch,remaining, budget, expenses  } = useContext(AppContext);
 
     const [name, setName] = useState('');
     const [cost, setCost] = useState('');
     const [action, setAction] = useState('');
+    
+    const totalExpenses = expenses.reduce((total, item) => {
+        return (total = total + item.cost);
+    }, 0);
 
     const submitEvent = () => {
 
+            if(budget < totalExpenses){
+                alert("You cannot reduce the budget value lower than the spending");
+                return;
+            }
             if(cost > remaining) {
-                alert("The value cannot exceed remaining funds  £"+remaining);
+                alert("The value cannot exceed remaining funds  $"+remaining);
                 setCost("");
                 return;
             }
-
+            
         const expense = {
             name: name,
             cost: parseInt(cost),
@@ -51,20 +59,30 @@ const AllocationForm = (props) => {
                 <option value="Admin" name="admin">Admin</option>
                   </select>
 
-                    <div className="input-group-prepend" style={{ marginLeft: '2rem' }}>
-                <label className="input-group-text" htmlFor="inputGroupSelect02">Allocation</label>
+                <div className="input-group-prepend" style={{ marginLeft: '2rem' }}>
+                    <label className="input-group-text" htmlFor="inputGroupSelect02">Allocation</label>
                 </div>
                   <select className="custom-select" id="inputGroupSelect02" onChange={(event) => setAction(event.target.value)}>
                         <option defaultValue value="Add" name="Add">Add</option>
-                <option value="Reduce" name="Reduce">Reduce</option>
+                        <option value="Reduce" name="Reduce">Reduce</option>
+                  </select>
+                <div className="input-group-prepend" style={{ marginLeft: '2rem' }}>
+                    <label className="input-group-text" htmlFor="inputGroupSelect02">Currency </label>
+                </div>
+                  <select className="custom-select" id="inputGroupSelect03" onChange={(event) => setName(event.target.value)}>
+                        <option value="$ Dolla"> $ Dolla</option>
+                        <option value="£ Pound" name="sales">£ Pound</option>
+                        <option value="€ Euro" name="finance">€ Euro</option>
+                        <option value="₹ Ruppee" name="hr">₹ Ruppee</option>
                   </select>
 
+                    <label style={{ marginLeft: '2rem' , size: 10}}>$</label>
                     <input
                         required='required'
                         type='number'
                         id='cost'
                         value={cost}
-                        style={{ marginLeft: '2rem' , size: 10}}
+                        style={{ marginLeft: '0.5rem' , size: 10}}
                         onChange={(event) => setCost(event.target.value)}>
                         </input>
 
